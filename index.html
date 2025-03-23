@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Neuro Rehab - Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Pain Scale Selection
+        const painButtons = document.querySelectorAll(".pain-button");
+        painButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            painButtons.forEach((btn) =>
+              btn.classList.remove("bg-purple-500", "text-white")
+            );
+            button.classList.add("bg-purple-500", "text-white");
+          });
+        });
+
+        // Notification Click
+        document
+          .getElementById("notification-button")
+          .addEventListener("click", () => {
+            alert("No new notifications at the moment!");
+          });
+
+        // Add scroll animations
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("animate-in");
+            }
+          });
+        });
+
+        document
+          .querySelectorAll(".scroll-animate")
+          .forEach((el) => observer.observe(el));
+      });
+    </script>
+    <style>
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+        100% {
+          transform: translateY(0px);
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      @keyframes backgroundAnimation {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      @keyframes slideInLeft {
+        from {
+          opacity: 0;
+          transform: translateX(-50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes slideInRight {
+        from {
+          opacity: 0;
+          transform: translateX(50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .animated-text {
+        animation: fadeInUp 1s ease-out;
+      }
+
+      .float-animation {
+        animation: float 3s ease-in-out infinite;
+      }
+
+      .pulse-animation {
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      .scroll-animate {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.6s ease-out;
+      }
+
+      .scroll-animate.animate-in {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .grid-item {
+        position: relative;
+        overflow: hidden;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        transition: all 0.3s ease;
+        min-height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+      }
+
+      .grid-item::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.85);
+        transition: all 0.3s ease;
+        z-index: 1;
+      }
+
+      .grid-item:hover::before {
+        background: rgba(255, 255, 255, 0.9);
+      }
+
+      /* Specific opacity for games and analytics */
+      .grid-item[style*="games-icon.png"]::before,
+      .grid-item[style*="Analytics.png"]::before {
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      .grid-item[style*="games-icon.png"]:hover::before,
+      .grid-item[style*="Analytics.png"]:hover::before {
+        background: rgba(255, 255, 255, 0.85);
+      }
+
+      .grid-content {
+        position: relative;
+        z-index: 2;
+        max-width: 80%;
+        margin: 0 auto;
+      }
+
+      .header-left {
+        animation: slideInLeft 1s ease-out;
+      }
+
+      .header-right {
+        animation: slideInRight 1s ease-out;
+      }
+
+      .header-decoration {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .header-content {
+        position: relative;
+        z-index: 1;
+      }
+
+      .header-gradient {
+        background: linear-gradient(135deg, #f6f8fc 0%, #e9ecef 100%);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .header-gradient::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url("addimage/header-pattern.png");
+        opacity: 0.1;
+        animation: fadeIn 1.5s ease-out;
+      }
+
+      .pain-scale-button {
+        transition: all 0.3s ease;
+        min-width: 100px;
+      }
+
+      .pain-scale-button:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .feature-title {
+        color: #2d3748;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+      }
+
+      .feature-description {
+        color: #4a5568;
+        line-height: 1.6;
+      }
+
+      .animated-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("addimage/neuro-bg.jpg");
+        background-size: cover;
+        background-position: center;
+        opacity: 0.25;
+        z-index: -1;
+        animation: backgroundAnimation 20s ease infinite;
+      }
+
+      .content-wrapper {
+        position: relative;
+        z-index: 1;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin: 1rem;
+        padding: 1rem;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gradient-to-br from-blue-50 via-purple-50 to-blue-50 min-h-screen flex flex-col items-center"
+  >
+    <div class="animated-background"></div>
+
+    <!-- Header -->
+    <header
+      class="header-gradient shadow-lg p-6 flex justify-between items-center w-full max-w-8xl rounded-lg mt-4"
+    >
+      <div class="header-decoration"></div>
+      <div class="header-content flex justify-between items-center w-full">
+        <div class="header-left flex items-center gap-4">
+          <img
+            src="addimage/logo.png"
+            alt="Logo"
+            class="w-12 h-12 animate-fadeIn"
+          />
+          <h1 class="text-4xl md:text-3xl font-semibold italic text-gray-800">
+            Welcome to Your Healing and Rehabilitation Space
+          </h1>
+        </div>
+        <div class="header-right flex gap-4">
+          <button
+            id="notification-button"
+            class="text-gray-600 text-2xl p-2 rounded-lg hover:bg-gray-300 transition"
+          >
+            🔔
+          </button>
+          <button
+            class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition shadow-md font-medium"
+          >
+            Login
+          </button>
+          <button
+            class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition shadow-md font-medium"
+          >
+            Sign Up
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="content-wrapper w-full max-w-6xl mt-6">
+      <h2 class="text-2xl font-semibold text-gray-800 text-center mb-8">
+        Let's Begin Your Journey to Recovery!
+      </h2>
+
+      <!-- Feature Buttons -->
+      <div class="grid grid-cols-2 gap-8 mt-6">
+        <button
+          class="grid-item rounded-xl hover:scale-105 transition shadow-lg"
+          style="background-image: url('addimage/rehab-icon.png')"
+        >
+          <div class="grid-content">
+            <h3 class="feature-title">Rehabilitation Focus</h3>
+            <p class="feature-description">
+              Personalized exercises to aid your recovery. Our programs are
+              tailored to your needs, ensuring a steady and safe rehabilitation
+              journey. Follow guided sessions designed by experts to improve
+              mobility and strength.
+            </p>
+          </div>
+        </button>
+        <button
+          class="grid-item rounded-xl hover:scale-105 transition shadow-lg"
+          style="background-image: url('addimage/games-icon.png')"
+        >
+          <div class="grid-content">
+            <h3 class="feature-title">Games</h3>
+            <p class="feature-description">
+              Engaging cognitive and physical therapy games. Improve memory,
+              motor skills, and coordination while having fun. Designed for all
+              ages and ability levels, these games support your neuroplasticity
+              and rehabilitation.
+            </p>
+          </div>
+        </button>
+        <button
+          class="grid-item rounded-xl hover:scale-105 transition shadow-lg"
+          style="background-image: url('addimage/Analytics.png')"
+        >
+          <div class="grid-content">
+            <h3 class="feature-title">Analytics</h3>
+            <p class="feature-description">
+              Track your progress with real-time insights. Get personalized
+              reports and data-driven recommendations to enhance your therapy
+              outcomes. Monitor improvements, identify patterns, and stay on
+              track with your recovery plan.
+            </p>
+          </div>
+        </button>
+        <button
+          class="grid-item rounded-xl hover:scale-105 transition shadow-lg"
+          style="background-image: url('addimage/doctor-logo.png')"
+        >
+          <div class="grid-content">
+            <h3 class="feature-title">Connect with Doctor</h3>
+            <p class="feature-description">
+              Get expert advice from healthcare professionals. Schedule virtual
+              consultations and receive tailored medical guidance to support
+              your recovery journey, ensuring you stay on the right path.
+            </p>
+          </div>
+        </button>
+      </div>
+
+      <!-- Pain Scale -->
+      <div class="mt-12 bg-white rounded-xl p-6 shadow-lg">
+        <h2 class="text-xl font-semibold text-gray-800 text-center mb-6">
+          How are you feeling today?
+        </h2>
+        <div class="flex justify-between flex-wrap gap-4">
+          <button
+            class="pain-scale-button pain-button text-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+          >
+            <p class="text-2xl mb-2">&#128578;</p>
+            <p class="font-semibold">0</p>
+            <p class="text-sm text-gray-600">No Pain</p>
+          </button>
+          <button
+            class="pain-scale-button pain-button text-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+          >
+            <p class="text-2xl mb-2">&#128522;</p>
+            <p class="font-semibold">2</p>
+            <p class="text-sm text-gray-600">Mild Discomfort</p>
+          </button>
+          <button
+            class="pain-scale-button pain-button text-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+          >
+            <p class="text-2xl mb-2">&#128528;</p>
+            <p class="font-semibold">4</p>
+            <p class="text-sm text-gray-600">Moderate Pain</p>
+          </button>
+          <button
+            class="pain-scale-button pain-button text-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+          >
+            <p class="text-2xl mb-2">&#128577;</p>
+            <p class="font-semibold">6</p>
+            <p class="text-sm text-gray-600">Severe Pain</p>
+          </button>
+          <button
+            class="pain-scale-button pain-button text-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+          >
+            <p class="text-2xl mb-2">&#128532;</p>
+            <p class="font-semibold">8</p>
+            <p class="text-sm text-gray-600">Very Severe Pain</p>
+          </button>
+          <button
+            class="pain-scale-button pain-button text-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+          >
+            <p class="text-2xl mb-2">&#128557;</p>
+            <p class="font-semibold">10</p>
+            <p class="text-sm text-gray-600">Unbearable Pain</p>
+          </button>
+        </div>
+      </div>
+
+      <!-- Healing Highlights -->
+      <div class="mt-16">
+        <h2 class="text-2xl font-semibold text-gray-800 text-center mb-8">
+          Healing Highlights
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <button
+            class="grid-item rounded-xl hover:scale-105 transition shadow-lg"
+            style="background-image: url('addimage/blogs-icon.png')"
+          >
+            <div class="grid-content">
+              <h3 class="feature-title">Health Blogs</h3>
+              <p class="feature-description">
+                Explore insightful articles on recovery, wellness, and
+                rehabilitation. Stay updated with expert advice, success
+                stories, and the latest trends in neuro rehab.
+              </p>
+            </div>
+          </button>
+          <button
+            class="grid-item rounded-xl hover:scale-105 transition shadow-lg"
+            style="background-image: url('addimage/videos-logo.png')"
+          >
+            <div class="grid-content">
+              <h3 class="feature-title">Watch Health Videos</h3>
+              <p class="feature-description">
+                Watch informative and engaging videos covering therapy
+                techniques, patient experiences, and expert tips to support your
+                healing journey.
+              </p>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
