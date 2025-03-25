@@ -37,6 +37,138 @@
         document
           .querySelectorAll(".scroll-animate")
           .forEach((el) => observer.observe(el));
+
+        // Testimonial Slider Functionality
+        const testimonialContainer = document.querySelector(
+          ".testimonial-container"
+        );
+        const testimonialCards = document.querySelectorAll(".testimonial-card");
+        const prevButton = document.querySelector(
+          ".testimonial-slider button:first-of-type"
+        );
+        const nextButton = document.querySelector(
+          ".testimonial-slider button:last-of-type"
+        );
+        const dots = document.querySelectorAll(
+          ".testimonial-slider .flex.justify-center button"
+        );
+
+        let currentIndex = 0;
+        let isDragging = false;
+        let startPos = 0;
+        let currentTranslate = 0;
+        let prevTranslate = 0;
+        let animationID = 0;
+        let cardWidth = 0;
+
+        // Calculate card width
+        function updateCardWidth() {
+          cardWidth = testimonialCards[0].offsetWidth;
+        }
+
+        // Update card width on window resize
+        window.addEventListener("resize", updateCardWidth);
+        updateCardWidth();
+
+        // Touch events for swipe
+        testimonialContainer.addEventListener("touchstart", touchStart);
+        testimonialContainer.addEventListener("touchend", touchEnd);
+        testimonialContainer.addEventListener("touchmove", touchMove);
+
+        // Mouse events for drag
+        testimonialContainer.addEventListener("mousedown", touchStart);
+        testimonialContainer.addEventListener("mouseup", touchEnd);
+        testimonialContainer.addEventListener("mouseleave", touchEnd);
+        testimonialContainer.addEventListener("mousemove", touchMove);
+
+        function touchStart(event) {
+          isDragging = true;
+          startPos = getPositionX(event);
+          animationID = requestAnimationFrame(animation);
+          testimonialContainer.style.cursor = "grabbing";
+          testimonialContainer.style.transition = "none";
+        }
+
+        function touchEnd() {
+          isDragging = false;
+          cancelAnimationFrame(animationID);
+          testimonialContainer.style.cursor = "grab";
+          testimonialContainer.style.transition = "transform 0.3s ease-out";
+
+          const movedBy = currentTranslate - prevTranslate;
+          if (Math.abs(movedBy) > cardWidth * 0.2) {
+            // 20% of card width threshold
+            if (movedBy < 0) {
+              nextTestimonial();
+            } else {
+              prevTestimonial();
+            }
+          }
+          currentTranslate = prevTranslate;
+          setSliderPosition();
+        }
+
+        function touchMove(event) {
+          if (isDragging) {
+            const currentPosition = getPositionX(event);
+            currentTranslate = prevTranslate + currentPosition - startPos;
+            setSliderPosition();
+          }
+        }
+
+        function getPositionX(event) {
+          return event.type.includes("mouse")
+            ? event.pageX
+            : event.touches[0].clientX;
+        }
+
+        function animation() {
+          setSliderPosition();
+          if (isDragging) requestAnimationFrame(animation);
+        }
+
+        function setSliderPosition() {
+          testimonialContainer.style.transform = `translateX(${currentTranslate}px)`;
+        }
+
+        function updateTestimonials() {
+          const offset = -currentIndex * cardWidth;
+          currentTranslate = offset;
+          prevTranslate = offset;
+          setSliderPosition();
+
+          // Update dots
+          dots.forEach((dot, index) => {
+            dot.classList.toggle("bg-blue-500", index === currentIndex);
+            dot.classList.toggle("bg-gray-300", index !== currentIndex);
+          });
+        }
+
+        function nextTestimonial() {
+          currentIndex = (currentIndex + 1) % testimonialCards.length;
+          updateTestimonials();
+        }
+
+        function prevTestimonial() {
+          currentIndex =
+            (currentIndex - 1 + testimonialCards.length) %
+            testimonialCards.length;
+          updateTestimonials();
+        }
+
+        // Event listeners for navigation
+        prevButton.addEventListener("click", prevTestimonial);
+        nextButton.addEventListener("click", nextTestimonial);
+
+        dots.forEach((dot, index) => {
+          dot.addEventListener("click", () => {
+            currentIndex = index;
+            updateTestimonials();
+          });
+        });
+
+        // Initialize testimonials
+        updateTestimonials();
       });
     </script>
     <style>
@@ -118,8 +250,53 @@
         }
       }
 
+      @keyframes textPulse {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.05);
+          opacity: 0.8;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      @keyframes textGlow {
+        0% {
+          text-shadow: 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+        50% {
+          text-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+        }
+        100% {
+          text-shadow: 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+      }
+
       .animated-text {
-        animation: fadeInUp 1s ease-out;
+        animation: textPulse 2s infinite, textGlow 2s infinite;
+        transition: all 0.3s ease;
+      }
+
+      .animated-text:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.1);
+      }
+
+      .animated-text:nth-child(1) {
+        animation-delay: 0s;
+      }
+
+      .animated-text:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      .animated-text:nth-child(5) {
+        animation-delay: 0.8s;
       }
 
       .float-animation {
@@ -199,12 +376,16 @@
 
       .header-decoration {
         position: absolute;
-        width: 100%;
-        height: 100%;
         top: 0;
         left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(
+          circle at top right,
+          rgba(59, 130, 246, 0.1),
+          transparent 70%
+        );
         pointer-events: none;
-        z-index: 0;
       }
 
       .header-content {
@@ -275,6 +456,18 @@
         margin: 1rem;
         padding: 1rem;
       }
+
+      .animate-slideInLeft {
+        animation: slideInLeft 0.8s ease-out forwards;
+      }
+
+      .animate-slideInRight {
+        animation: slideInRight 0.8s ease-out forwards;
+      }
+
+      .delay-100 {
+        animation-delay: 100ms;
+      }
     </style>
   </head>
   <body
@@ -284,40 +477,161 @@
 
     <!-- Header -->
     <header
-      class="header-gradient shadow-lg p-6 flex justify-between items-center w-full max-w-8xl rounded-lg mt-4"
+      class="header-gradient shadow-lg p-8 flex justify-between items-center w-full max-w-8xl rounded-lg mt-4 relative overflow-hidden"
     >
       <div class="header-decoration"></div>
       <div class="header-content flex justify-between items-center w-full">
-        <div class="header-left flex items-center gap-4">
-          <img
-            src="addimage/logo.png"
-            alt="Logo"
-            class="w-12 h-12 animate-fadeIn"
-          />
-          <h1 class="text-4xl md:text-3xl font-semibold italic text-gray-800">
-            Welcome to Your Healing and Rehabilitation Space
-          </h1>
+        <div class="header-left flex items-center gap-6">
+          <div class="relative">
+            <div
+              class="absolute inset-0 bg-blue-500 rounded-full animate-pulse opacity-20"
+            ></div>
+            <img
+              src="addimage/logo.png"
+              alt="Logo"
+              class="w-16 h-16 animate-fadeIn relative z-10"
+            />
+          </div>
+          <div class="space-y-2">
+            <h1
+              class="text-4xl md:text-5xl font-bold text-gray-800 animate-slideInLeft"
+            >
+              <span
+                class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600"
+              >
+                Welcome to Your Healing Space
+              </span>
+            </h1>
+            <div
+              class="flex items-center space-x-4 text-lg animate-slideInLeft delay-100"
+            >
+              <span
+                class="animated-text bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text font-bold text-2xl"
+                >PLAY</span
+              >
+              <span class="text-gray-400">|</span>
+              <span
+                class="animated-text bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text font-bold text-2xl"
+                >HEAL</span
+              >
+              <span class="text-gray-400">|</span>
+              <span
+                class="animated-text bg-gradient-to-r from-pink-600 to-red-600 text-transparent bg-clip-text font-bold text-2xl"
+                >THRIVE</span
+              >
+            </div>
+          </div>
         </div>
-        <div class="header-right flex gap-4">
-          <button
-            id="notification-button"
-            class="text-gray-600 text-2xl p-2 rounded-lg hover:bg-gray-300 transition"
-          >
-            🔔
+
+        <div class="header-right flex items-center gap-6">
+          <button id="notification-button" class="relative group">
+            <div
+              class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full animate-pulse"
+            ></div>
+            <span
+              class="text-gray-600 text-3xl p-3 rounded-lg hover:bg-gray-100 transition-all duration-300 group-hover:scale-110"
+            >
+              🔔
+            </span>
           </button>
-          <button
-            class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition shadow-md font-medium"
-          >
-            Login
-          </button>
-          <button
-            class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition shadow-md font-medium"
-          >
-            Sign Up
-          </button>
+          <div class="flex gap-4">
+            <button
+              class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 shadow-md font-medium hover:shadow-lg hover:-translate-y-1"
+            >
+              Login
+            </button>
+            <button
+              class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md font-medium hover:shadow-lg hover:-translate-y-1"
+            >
+              Sign Up
+            </button>
+          </div>
         </div>
       </div>
     </header>
+
+    <!-- Website Description Section -->
+    <div class="description-section w-full max-w-6xl mt-6 mb-8">
+      <div class="bg-white rounded-xl p-8 shadow-lg relative overflow-hidden">
+        <div
+          class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500"
+        ></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div class="description-content space-y-4">
+            <h2 class="text-3xl font-bold text-gray-800 animate-fadeIn">
+              Your Journey to Recovery Starts Here
+            </h2>
+            <p class="text-gray-600 leading-relaxed animate-fadeIn">
+              Welcome to Neuro Rehab, your comprehensive platform for
+              neurological rehabilitation and recovery. We combine cutting-edge
+              technology with evidence-based therapeutic approaches to provide
+              personalized care and support throughout your healing journey.
+            </p>
+            <div class="flex flex-wrap gap-4 mt-6">
+              <div class="flex items-center gap-2">
+                <span class="text-blue-500 text-xl">✓</span>
+                <span class="text-gray-700">Personalized Care</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-blue-500 text-xl">✓</span>
+                <span class="text-gray-700">Expert Guidance</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-blue-500 text-xl">✓</span>
+                <span class="text-gray-700">Progress Tracking</span>
+              </div>
+            </div>
+          </div>
+          <div class="description-image relative">
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-blue-100 to-purple-100 rounded-lg transform rotate-3"
+            ></div>
+            <div
+              class="relative bg-white p-6 rounded-lg shadow-md transform -rotate-2"
+            >
+              <div class="space-y-4">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                  <h3 class="font-semibold text-blue-800 mb-2">
+                    Evidence-Based Approach
+                  </h3>
+                  <p class="text-sm text-gray-700">
+                    Our rehabilitation programs are developed by leading
+                    neurological experts and backed by scientific research.
+                  </p>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-lg">
+                  <h3 class="font-semibold text-purple-800 mb-2">
+                    Comprehensive Support
+                  </h3>
+                  <p class="text-sm text-gray-700">
+                    From initial assessment to recovery milestones, we provide
+                    continuous guidance and support throughout your journey.
+                  </p>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg">
+                  <h3 class="font-semibold text-green-800 mb-2">
+                    Interactive Learning
+                  </h3>
+                  <p class="text-sm text-gray-700">
+                    Engage with interactive exercises and real-time feedback to
+                    enhance your rehabilitation experience.
+                  </p>
+                </div>
+                <div class="bg-orange-50 p-4 rounded-lg">
+                  <h3 class="font-semibold text-orange-800 mb-2">
+                    Community Support
+                  </h3>
+                  <p class="text-sm text-gray-700">
+                    Connect with others on similar recovery journeys and share
+                    experiences in a supportive environment.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Main Content -->
     <div class="content-wrapper w-full max-w-6xl mt-6">
@@ -470,5 +784,384 @@
         </div>
       </div>
     </div>
+
+    <!-- Testimonials Section -->
+    <div class="w-full bg-gradient-to-br from-blue-50 to-purple-50 py-16">
+      <div class="max-w-7xl mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">
+          Success Stories
+        </h2>
+        <div class="testimonial-slider relative overflow-hidden">
+          <div
+            class="testimonial-container flex transition-transform duration-500 ease-in-out"
+          >
+            <!-- Testimonial 1 -->
+            <div
+              class="testimonial-card w-full flex-shrink-0 bg-white rounded-xl shadow-lg p-8 transform transition-all duration-300 hover:scale-105 cursor-pointer"
+            >
+              <div class="flex items-center mb-6">
+                <div
+                  class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center"
+                >
+                  <span class="text-blue-600 text-3xl">SM</span>
+                </div>
+                <div class="ml-8">
+                  <h3 class="font-semibold text-gray-800 text-2xl">
+                    Sarah Mitchell
+                  </h3>
+                  <p class="text-sm text-gray-600">Stroke Recovery</p>
+                </div>
+              </div>
+              <p class="text-gray-700 italic text-xl leading-relaxed">
+                "The personalized exercises and progress tracking have made my
+                recovery journey so much more effective. I've seen remarkable
+                improvements in my mobility. The platform's comprehensive
+                approach to rehabilitation has been truly transformative."
+              </p>
+              <div class="mt-8 flex items-center">
+                <span class="text-yellow-400 text-3xl">★★★★★</span>
+                <span class="text-sm text-gray-600 ml-4">5.0</span>
+              </div>
+            </div>
+
+            <!-- Testimonial 2 -->
+            <div
+              class="testimonial-card w-full flex-shrink-0 bg-white rounded-xl shadow-lg p-8 transform transition-all duration-300 hover:scale-105 cursor-pointer"
+            >
+              <div class="flex items-center mb-6">
+                <div
+                  class="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center"
+                >
+                  <span class="text-purple-600 text-3xl">MR</span>
+                </div>
+                <div class="ml-8">
+                  <h3 class="font-semibold text-gray-800 text-2xl">
+                    Michael Roberts
+                  </h3>
+                  <p class="text-sm text-gray-600">TBI Patient</p>
+                </div>
+              </div>
+              <p class="text-gray-700 italic text-xl leading-relaxed">
+                "The interactive games make therapy engaging and fun while
+                helping me improve my cognitive abilities. It's been a
+                game-changer in my recovery. The real-time feedback and progress
+                tracking keep me motivated."
+              </p>
+              <div class="mt-8 flex items-center">
+                <span class="text-yellow-400 text-3xl">★★★★★</span>
+                <span class="text-sm text-gray-600 ml-4">5.0</span>
+              </div>
+            </div>
+
+            <!-- Testimonial 3 -->
+            <div
+              class="testimonial-card w-full flex-shrink-0 bg-white rounded-xl shadow-lg p-8 transform transition-all duration-300 hover:scale-105 cursor-pointer"
+            >
+              <div class="flex items-center mb-6">
+                <div
+                  class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center"
+                >
+                  <span class="text-green-600 text-3xl">JD</span>
+                </div>
+                <div class="ml-8">
+                  <h3 class="font-semibold text-gray-800 text-2xl">
+                    James Davis
+                  </h3>
+                  <p class="text-sm text-gray-600">Spinal Injury</p>
+                </div>
+              </div>
+              <p class="text-gray-700 italic text-xl leading-relaxed">
+                "The virtual consultations with specialists have been
+                invaluable. The platform's comprehensive approach to
+                rehabilitation is truly impressive. The personalized exercise
+                programs have helped me regain strength and mobility."
+              </p>
+              <div class="mt-8 flex items-center">
+                <span class="text-yellow-400 text-3xl">★★★★★</span>
+                <span class="text-sm text-gray-600 ml-4">5.0</span>
+              </div>
+            </div>
+
+            <!-- Testimonial 4 -->
+            <div
+              class="testimonial-card w-full flex-shrink-0 bg-white rounded-xl shadow-lg p-8 transform transition-all duration-300 hover:scale-105 cursor-pointer"
+            >
+              <div class="flex items-center mb-6">
+                <div
+                  class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center"
+                >
+                  <span class="text-red-600 text-3xl">AL</span>
+                </div>
+                <div class="ml-8">
+                  <h3 class="font-semibold text-gray-800 text-2xl">Amy Lee</h3>
+                  <p class="text-sm text-gray-600">Multiple Sclerosis</p>
+                </div>
+              </div>
+              <p class="text-gray-700 italic text-xl leading-relaxed">
+                "The flexibility of the program allows me to maintain my therapy
+                schedule despite my varying energy levels. The progress tracking
+                keeps me motivated, and the community support is incredibly
+                encouraging."
+              </p>
+              <div class="mt-8 flex items-center">
+                <span class="text-yellow-400 text-3xl">★★★★★</span>
+                <span class="text-sm text-gray-600 ml-4">5.0</span>
+              </div>
+            </div>
+
+            <!-- Testimonial 5 -->
+            <div
+              class="testimonial-card w-full flex-shrink-0 bg-white rounded-xl shadow-lg p-8 transform transition-all duration-300 hover:scale-105 cursor-pointer"
+            >
+              <div class="flex items-center mb-6">
+                <div
+                  class="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center"
+                >
+                  <span class="text-yellow-600 text-3xl">RK</span>
+                </div>
+                <div class="ml-8">
+                  <h3 class="font-semibold text-gray-800 text-2xl">
+                    Robert King
+                  </h3>
+                  <p class="text-sm text-gray-600">Parkinson's Disease</p>
+                </div>
+              </div>
+              <p class="text-gray-700 italic text-xl leading-relaxed">
+                "The balance exercises and cognitive training have significantly
+                improved my daily activities. The support from the community is
+                incredibly encouraging, and the progress tracking helps me stay
+                motivated."
+              </p>
+              <div class="mt-8 flex items-center">
+                <span class="text-yellow-400 text-3xl">★★★★★</span>
+                <span class="text-sm text-gray-600 ml-4">5.0</span>
+              </div>
+            </div>
+
+            <!-- Testimonial 6 -->
+            <div
+              class="testimonial-card w-full flex-shrink-0 bg-white rounded-xl shadow-lg p-8 transform transition-all duration-300 hover:scale-105 cursor-pointer"
+            >
+              <div class="flex items-center mb-6">
+                <div
+                  class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center"
+                >
+                  <span class="text-indigo-600 text-3xl">MP</span>
+                </div>
+                <div class="ml-8">
+                  <h3 class="font-semibold text-gray-800 text-2xl">
+                    Maria Patel
+                  </h3>
+                  <p class="text-sm text-gray-600">Cerebral Palsy</p>
+                </div>
+              </div>
+              <p class="text-gray-700 italic text-xl leading-relaxed">
+                "The adaptive exercises have helped me build strength and
+                coordination. The progress tracking shows my improvement over
+                time, and the virtual consultations with specialists are
+                incredibly helpful."
+              </p>
+              <div class="mt-8 flex items-center">
+                <span class="text-yellow-400 text-3xl">★★★★★</span>
+                <span class="text-sm text-gray-600 ml-4">5.0</span>
+              </div>
+            </div>
+
+            <!-- Testimonial 7 -->
+            <div
+              class="testimonial-card w-full flex-shrink-0 bg-white rounded-xl shadow-lg p-8 transform transition-all duration-300 hover:scale-105 cursor-pointer"
+            >
+              <div class="flex items-center mb-6">
+                <div
+                  class="w-20 h-20 bg-pink-100 rounded-full flex items-center justify-center"
+                >
+                  <span class="text-pink-600 text-3xl">TW</span>
+                </div>
+                <div class="ml-8">
+                  <h3 class="font-semibold text-gray-800 text-2xl">
+                    Thomas Wright
+                  </h3>
+                  <p class="text-sm text-gray-600">Traumatic Brain Injury</p>
+                </div>
+              </div>
+              <p class="text-gray-700 italic text-xl leading-relaxed">
+                "The cognitive exercises and memory games have helped me regain
+                focus and concentration. The platform's user-friendly interface
+                makes it easy to stay consistent, and the progress tracking is
+                motivating."
+              </p>
+              <div class="mt-8 flex items-center">
+                <span class="text-yellow-400 text-3xl">★★★★★</span>
+                <span class="text-sm text-gray-600 ml-4">5.0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Navigation Arrows -->
+          <button
+            class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-4 shadow-lg hover:bg-gray-100 transition-colors z-10"
+          >
+            <svg
+              class="w-8 h-8 text-gray-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"
+              ></path>
+            </svg>
+          </button>
+          <button
+            class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-4 shadow-lg hover:bg-gray-100 transition-colors z-10"
+          >
+            <svg
+              class="w-8 h-8 text-gray-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              ></path>
+            </svg>
+          </button>
+
+          <!-- Dots Navigation -->
+          <div class="flex justify-center mt-8 space-x-3">
+            <button class="w-3 h-3 bg-blue-500 rounded-full"></button>
+            <button class="w-3 h-3 bg-gray-300 rounded-full"></button>
+            <button class="w-3 h-3 bg-gray-300 rounded-full"></button>
+            <button class="w-3 h-3 bg-gray-300 rounded-full"></button>
+            <button class="w-3 h-3 bg-gray-300 rounded-full"></button>
+            <button class="w-3 h-3 bg-gray-300 rounded-full"></button>
+            <button class="w-3 h-3 bg-gray-300 rounded-full"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="w-full bg-gray-900 text-white mt-16">
+      <div class="max-w-7xl mx-auto px-4 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Company Info -->
+          <div class="space-y-4">
+            <img src="addimage/logo.png" alt="Logo" class="w-12 h-12" />
+            <h3 class="text-xl font-semibold">Neuro Rehab</h3>
+            <p class="text-gray-400 text-sm">
+              Empowering recovery through technology and expert care.
+            </p>
+          </div>
+
+          <!-- Quick Links -->
+          <div>
+            <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+            <ul class="space-y-2">
+              <li>
+                <a href="#" class="text-gray-400 hover:text-white transition"
+                  >About Us</a
+                >
+              </li>
+              <li>
+                <a href="#" class="text-gray-400 hover:text-white transition"
+                  >Our Services</a
+                >
+              </li>
+              <li>
+                <a href="#" class="text-gray-400 hover:text-white transition"
+                  >Treatment Programs</a
+                >
+              </li>
+              <li>
+                <a href="#" class="text-gray-400 hover:text-white transition"
+                  >Contact Us</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <!-- Social Links & Contact -->
+          <div>
+            <h3 class="text-lg font-semibold mb-4">Connect With Us</h3>
+            <div class="flex space-x-4 mb-6">
+              <a href="#" class="text-gray-400 hover:text-white transition">
+                <svg
+                  class="w-6 h-6"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"
+                  ></path>
+                </svg>
+              </a>
+              <a href="#" class="text-gray-400 hover:text-white transition">
+                <svg
+                  class="w-6 h-6"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M12.315 2c2.43 0 2.784.013 3.808.09 1.064.07 1.791.207 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.258.636.395 1.363.465 2.427.067 1.067.09 1.407.09 4.123v.08c0 2.643-.012 2.987-.09 4.043-.07 1.064-.207 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.258-1.363.395-2.427.465-1.067.067-1.407.09-4.123.09h-.08c-2.643 0-2.987-.012-4.043-.09-1.064-.07-1.791-.207-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.258-.636-.395-1.363-.465-2.427-.07-1.024-.077-1.379-.077-4.808v-.08c0-2.43.013-2.784.09-3.808.07-1.064.207-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.258 1.363-.395 2.427-.465C8.901 2.013 9.256 2 11.685 2h.08zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+              </a>
+              <a href="#" class="text-gray-400 hover:text-white transition">
+                <svg
+                  class="w-6 h-6"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+              </a>
+            </div>
+            <div class="space-y-2">
+              <p class="text-gray-400 text-sm">Email: support@neurorehab.com</p>
+              <p class="text-gray-400 text-sm">Customer Care: 1-800-123-4567</p>
+              <p class="text-gray-400 text-sm">
+                Address: 123 Health Street, Medical District
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="border-t border-gray-800 mt-12 pt-8">
+          <div class="flex flex-col md:flex-row justify-between items-center">
+            <p class="text-gray-400 text-sm">
+              © 2024 Neuro Rehab. All rights reserved.
+            </p>
+            <div class="flex space-x-6 mt-4 md:mt-0">
+              <a href="#" class="text-gray-400 hover:text-white text-sm"
+                >Privacy Policy</a
+              >
+              <a href="#" class="text-gray-400 hover:text-white text-sm"
+                >Terms of Service</a
+              >
+              <a href="#" class="text-gray-400 hover:text-white text-sm"
+                >Cookie Policy</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>
