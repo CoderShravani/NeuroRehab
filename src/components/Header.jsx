@@ -1,7 +1,7 @@
 import React from "react";
 
 const Header = () => {
-  const handleNotificationClick = () => {
+  const handleNotification = () => {
     alert("No new notifications at the moment!");
   };
 
@@ -41,7 +41,7 @@ const Header = () => {
         </div>
 
         <div className="header-right flex items-center gap-6">
-          <button onClick={handleNotificationClick} className="relative group">
+          <button onClick={handleNotification} className="relative group">
             <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full animate-pulse"></div>
             <span className="text-gray-600 text-3xl p-3 rounded-lg hover:bg-gray-100 transition-all duration-300 group-hover:scale-110">
               🔔
