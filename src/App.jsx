@@ -6,11 +6,10 @@ import Testimonials from "./components/Testimonials";
 import Footer from "./components/Footer";
 import "./styles/App.css";
 
-function App() {
+const App = () => {
   return (
-    <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-blue-50 min-h-screen flex flex-col items-center">
+    <div className="app">
       <div className="animated-background"></div>
-
       <Header />
       <DescriptionSection />
       <MainContent />
@@ -18,6 +17,6 @@ function App() {
       <Footer />
     </div>
   );
-}
+};
 
 export default App;

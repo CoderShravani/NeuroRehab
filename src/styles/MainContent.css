@@ -1,0 +1,184 @@
+/* Content wrapper styles */
+.content-wrapper {
+  position: relative;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 1rem;
+  padding: 2rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Grid styles */
+.grid {
+  display: grid;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-item {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  aspect-ratio: 1;
+  border: none;
+  padding: 0;
+}
+
+.grid-item:hover {
+  transform: translateY(-5px);
+}
+
+.grid-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.5rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  color: white;
+}
+
+.grid-item .feature-title {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.grid-item .feature-description {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  opacity: 0.9;
+}
+
+/* Pain scale styles */
+.pain-scale {
+  margin: 3rem 0;
+  text-align: center;
+}
+
+.pain-scale-title {
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.pain-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.pain-button {
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  min-width: 100px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.pain-button:hover {
+  border-color: #3b82f6;
+  transform: translateY(-2px);
+}
+
+.pain-button.selected {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.pain-emoji {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.pain-value {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
+.pain-label {
+  font-size: 0.875rem;
+  color: #666;
+}
+
+/* Feature title and description styles */
+.feature-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.feature-description {
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+/* Coming soon items */
+.coming-soon {
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.coming-soon .grid-content {
+  background: none;
+  position: relative;
+  padding: 2rem;
+}
+
+.coming-soon .feature-title,
+.coming-soon .feature-description {
+  color: #666;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .pain-buttons {
+    gap: 0.5rem;
+  }
+
+  .pain-button {
+    min-width: 80px;
+    padding: 0.75rem;
+  }
+
+  .pain-emoji {
+    font-size: 1.5rem;
+  }
+
+  .pain-value {
+    font-size: 1rem;
+  }
+
+  .pain-label {
+    font-size: 0.75rem;
+  }
+}

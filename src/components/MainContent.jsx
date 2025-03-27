@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "../styles/MainContent.css";
 
 const MainContent = () => {
   const [selectedPain, setSelectedPain] = useState(null);
@@ -59,17 +60,17 @@ const MainContent = () => {
   };
 
   return (
-    <div className="content-wrapper w-full max-w-6xl mt-6">
-      <h2 className="text-2xl font-semibold text-gray-800 text-center mb-8">
+    <div className="content-wrapper">
+      <h2 className="feature-title text-center">
         Let's Begin Your Journey to Recovery!
       </h2>
 
-      {/* Feature Buttons */}
-      <div className="grid grid-cols-2 gap-8 mt-6">
+      {/* Feature Buttons - 2x2 Grid */}
+      <div className="grid grid-2">
         {features.map((feature, index) => (
           <button
             key={index}
-            className="grid-item rounded-xl hover:scale-105 transition shadow-lg"
+            className="grid-item"
             style={{ backgroundImage: `url('/addimage/${feature.image}')` }}
           >
             <div className="grid-content">
@@ -81,37 +82,33 @@ const MainContent = () => {
       </div>
 
       {/* Pain Scale */}
-      <div className="mt-12 bg-white rounded-xl p-6 shadow-lg">
-        <h2 className="text-xl font-semibold text-gray-800 text-center mb-6">
-          How are you feeling today?
-        </h2>
-        <div className="flex justify-between flex-wrap gap-4">
+      <div className="pain-scale">
+        <h2 className="pain-scale-title">How are you feeling today?</h2>
+        <div className="pain-buttons">
           {painScaleData.map((pain) => (
             <button
               key={pain.value}
               onClick={() => handlePainSelection(pain.value)}
-              className={`pain-scale-button text-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition ${
-                selectedPain === pain.value ? "bg-purple-500 text-white" : ""
+              className={`pain-button ${
+                selectedPain === pain.value ? "selected" : ""
               }`}
             >
-              <p className="text-2xl mb-2">{pain.emoji}</p>
-              <p className="font-semibold">{pain.value}</p>
-              <p className="text-sm text-gray-600">{pain.label}</p>
+              <p className="pain-emoji">{pain.emoji}</p>
+              <p className="pain-value">{pain.value}</p>
+              <p className="pain-label">{pain.label}</p>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Healing Highlights */}
+      {/* Healing Highlights - 2x2 Grid */}
       <div className="mt-16">
-        <h2 className="text-2xl font-semibold text-gray-800 text-center mb-8">
-          Healing Highlights
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <h2 className="feature-title text-center">Healing Highlights</h2>
+        <div className="grid grid-2">
           {healingHighlights.map((highlight, index) => (
             <button
               key={index}
-              className="grid-item rounded-xl hover:scale-105 transition shadow-lg"
+              className="grid-item"
               style={{ backgroundImage: `url('/addimage/${highlight.image}')` }}
             >
               <div className="grid-content">
@@ -120,6 +117,19 @@ const MainContent = () => {
               </div>
             </button>
           ))}
+          {/* Add two empty grid items to maintain 2x2 layout */}
+          <div className="grid-item coming-soon">
+            <div className="grid-content">
+              <h3 className="feature-title">Coming Soon</h3>
+              <p className="feature-description">More features on the way!</p>
+            </div>
+          </div>
+          <div className="grid-item coming-soon">
+            <div className="grid-content">
+              <h3 className="feature-title">Coming Soon</h3>
+              <p className="feature-description">More features on the way!</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
